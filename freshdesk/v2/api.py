@@ -143,6 +143,18 @@ class CustomerAPI(object):
     def get_customer_from_contact(self, contact):
         return self.get_customer(contact.customer_id)
 
+class CtiAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def pop_call(self, requester_phone, responder_id):
+        url = 'integrations/cti/pop'
+        data = {
+            'requester_phone': requester_phone,
+            'responder_id': responder_id,
+        }
+        response = self._api._post(url, data=json.dumps(data))
+        return response
 
 class API(object):
     def __init__(self, domain, api_key):
@@ -166,6 +178,7 @@ class API(object):
         self.contacts = ContactAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
+        self.cti = CtiAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'
