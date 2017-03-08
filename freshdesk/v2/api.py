@@ -2,7 +2,7 @@ import requests
 from requests.exceptions import HTTPError
 import json
 from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group
-
+import time
 
 class TicketAPI(object):
     def __init__(self, api):
@@ -149,7 +149,9 @@ class CtiAPI(object):
 
     def pop_call(self, requester_phone, responder_id):
         url = 'integrations/cti/pop'
+	timestamp = int(time.time())	
         data = {
+            'call_reference_id': requester_phone+'-'+timestamp,
             'requester_phone': requester_phone,
             'responder_id': responder_id,
         }
