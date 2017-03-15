@@ -149,12 +149,13 @@ class CtiAPI(object):
 
     def pop_call(self, requester_phone, responder_id):
         url = 'integrations/cti/pop'
-	timestamp = int(time.time())	
+        timestamp = int(time.time())
         data = {
-            'call_reference_id': requester_phone+'-'+timestamp,
-            'requester_phone': requester_phone,
+            'call_reference_id': str(requester_phone)+'-'+str(timestamp),
+            'requester_phone': str(requester_phone),
             'responder_id': responder_id,
         }
+        print(json.dumps(data))
         response = self._api._post(url, data=json.dumps(data))
         return response
 
