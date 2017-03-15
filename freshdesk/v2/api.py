@@ -127,6 +127,28 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+
+    def list_contacts(self):
+        url = 'contacts'
+        contacts = []
+        did_finish=False
+        limit=30
+        page=1
+
+        while not did_finish:
+            fetched = self._api._get(url,params={'page': page})
+
+            for c in fetched:
+                contacts.append(Contact(**c))
+
+            if len(fetched) < limit:
+                did_finish = True
+            else:
+                page += 1
+
+        return contacts
+
+
     def get_contact(self, contact_id):
         url = 'contacts/%s' % contact_id
         return Contact(**self._api._get(url))
