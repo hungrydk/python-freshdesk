@@ -155,7 +155,6 @@ class CtiAPI(object):
             'requester_phone': str(requester_phone),
             'responder_id': responder_id,
         }
-        print(json.dumps(data))
         response = self._api._post(url, data=json.dumps(data))
         return response
 
