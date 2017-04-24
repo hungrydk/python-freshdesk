@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group
+from freshdesk.v2.models import Ticket, Comment, Company, Customer, Contact, Group
 import time
 
 class TicketAPI(object):
@@ -165,6 +165,19 @@ class CustomerAPI(object):
     def get_customer_from_contact(self, contact):
         return self.get_customer(contact.customer_id)
 
+
+class CompanyAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_company(self, company_id):
+        url = 'companies/%s' % company_id
+        return Company(**self._api._get(url))
+
+    def get_company_from_contact(self, contact):
+        return self.get_company(contact.company_id)
+
+
 class CtiAPI(object):
     def __init__(self, api):
         self._api = api
@@ -179,6 +192,7 @@ class CtiAPI(object):
         }
         response = self._api._post(url, data=json.dumps(data))
         return response
+
 
 class API(object):
     def __init__(self, domain, api_key):
@@ -202,6 +216,7 @@ class API(object):
         self.contacts = ContactAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
+        self.companies = CompanyAPI(self)
         self.cti = CtiAPI(self)
 
         if domain.find('freshdesk.com') < 0:
