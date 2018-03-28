@@ -155,7 +155,7 @@ class ContactAPI(object):
     
     def search_contact(self, search_contact_query):
         url = 'search/contacts?query=%s' % search_contact_query
-        return Contact(**self._api._get(url))
+        return **self._api._get(url)
 
 
 class CustomerAPI(object):
