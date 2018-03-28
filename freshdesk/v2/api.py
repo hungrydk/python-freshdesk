@@ -152,6 +152,10 @@ class ContactAPI(object):
     def get_contact(self, contact_id):
         url = 'contacts/%s' % contact_id
         return Contact(**self._api._get(url))
+    
+    def search_contact(self, search_contact_query):
+        url = 'search/contacts?query=%s' % search_contact_query
+        return Contact(**self._api._get(url))
 
 
 class CustomerAPI(object):
