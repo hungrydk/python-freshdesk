@@ -1,8 +1,8 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company
-
+from models import Ticket, Comment, Company, Customer, Contact, Group
+import time
 
 class TicketAPI(object):
     def __init__(self, api):
@@ -151,10 +151,36 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+
+    def list_contacts(self):
+        url = 'contacts'
+        contacts = []
+        did_finish=False
+        limit=30
+        page=1
+
+        while not did_finish:
+            fetched = self._api._get(url,params={'page': page})
+
+            for c in fetched:
+                contacts.append(Contact(**c))
+
+            if len(fetched) < limit:
+                did_finish = True
+            else:
+                page += 1
+
+        return contacts
+
+
     def get_contact(self, contact_id):
         url = 'contacts/%s' % contact_id
         return Contact(**self._api._get(url))
-
+    
+    def search_contact(self, search_contact_query):
+        url = 'search/contacts?query=%s' % search_contact_query
+        response = self._api._get(url)
+        return response
 
 class CustomerAPI(object):
     def __init__(self, api):
@@ -174,6 +200,34 @@ class CompanyAPI(object):
     def get_company(self, company_id):
         url = 'companies/%s' % company_id
         return Company(**self._api._get(url))
+
+class CompanyAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_company(self, company_id):
+        url = 'companies/%s' % company_id
+        return Company(**self._api._get(url))
+
+    def get_company_from_contact(self, contact):
+        return self.get_company(contact.company_id)
+
+
+class CtiAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def pop_call(self, requester_phone, responder_id):
+        url = 'integrations/cti/pop'
+        timestamp = int(time.time())
+        data = {
+            'call_reference_id': str(requester_phone)+'-'+str(timestamp),
+            'requester_phone': str(requester_phone),
+            'responder_id': responder_id,
+        }
+        response = self._api._post(url, data=json.dumps(data))
+        return response
+
 
 class API(object):
     def __init__(self, domain, api_key):
@@ -198,6 +252,8 @@ class API(object):
         self.companies = CompanyAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
+        self.companies = CompanyAPI(self)
+        self.cti = CtiAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'
