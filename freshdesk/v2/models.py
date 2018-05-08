@@ -9,7 +9,7 @@ class FreshdeskModel(object):
             custom_fields = kwargs.pop("custom_field")
             kwargs.update(custom_fields)
         for k, v in kwargs.items():
-            if hasattr(Ticket, k):
+            if hasattr(self, k):
                 k = '_' + k
             setattr(self, k, v)
             self._keys.add(k)
