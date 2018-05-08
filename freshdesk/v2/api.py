@@ -185,7 +185,10 @@ class ContactAPI(object):
     def search_contact(self, search_contact_query):
         url = 'search/contacts?query=%s' % search_contact_query
         response = self._api._get(url)
-        return response
+        contacts = []
+        for contact in response["results"]:
+            contacts.append(Contact(**contact))
+        return contacts
 
 class CustomerAPI(object):
     def __init__(self, api):
