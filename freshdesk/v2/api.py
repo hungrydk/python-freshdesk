@@ -190,6 +190,11 @@ class ContactAPI(object):
             contacts.append(Contact(**contact))
         return contacts
 
+    def delete_contact(self, contact_id):
+        url = 'contacts/%s' % contact_id
+        return self._api._delete(url)
+
+
 class CustomerAPI(object):
     def __init__(self, api):
         self._api = api
