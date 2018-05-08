@@ -106,6 +106,11 @@ class TicketAPI(object):
         """Lists all deleted tickets."""
         return self.list_tickets(filter_name='deleted')
 
+    def search_tickets(self, search_ticket_query):
+        url = 'search/tickets?query=%s' % search_ticket_query
+        response = self._api._get(url)
+        return response
+
 
 class CommentAPI(object):
     def __init__(self, api):
